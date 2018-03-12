@@ -1,0 +1,4 @@
+virtual/
+.vscode/
+.env
+__py_cache__/
