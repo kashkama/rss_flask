@@ -14,7 +14,13 @@ RSS_FEEDS = {
     "fox": "http://feeds.foxnews.com/foxnews/latest",
     "iol": "http://www.iol.co.za/cmlink/1.640"
 }
-DEFAULTS = {"publication": "bbc", "city":"Nairobi,Kenya"}
+DEFAULTS = {
+    "publication": "bbc",
+    "city":"Nairobi,Kenya",
+    "currency_from": "KES",
+    "currency_to": "USD"
+}
+
 
 @app.route("/")
 def home():
@@ -30,8 +36,25 @@ def home():
         city = DEFAULTS["city"]
     
     weather = get_weather(city)
+    # get customized currency based on user input or default
+    currency_from = request.args.get("currency_from")
+    if not currency_from:
+        currency_from = DEFAULTS["currency_from"]
 
-    return render_template("home.html", articles=articles, weather=weather)
+    currency_to = request.args.get("currency_to")
+    if not currency_to:
+        currency_to = DEFAULTS["currency_to"]
+    
+    rate = get_rates(currency_from, currency_to)
+
+    return render_template(
+        "home.html",
+        articles=articles,
+        weather=weather,
+        currency_from=currency_from,
+        currency_to=currency_to,
+        rate=rate
+    )
 
 def get_news(query):
     if not query or query.lower() not in RSS_FEEDS:
@@ -42,9 +65,8 @@ def get_news(query):
     return feed["entries"]
 
 def get_weather(query):
-    api_url =  "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=2d5b161aa35a6b40ab5b8f3fc1f7d8a3"
     query = urllib.parse.quote(query)
-    url = api_url.format(query)
+    url = WEATHER_URL.format(query)
     data = urllib2.urlopen(url).read()
     parsed = json.loads(data)
     weather = None
@@ -52,9 +74,17 @@ def get_weather(query):
         weather = {
             "description": parsed["weather"][0]["description"],
             "temperature": parsed["main"]["temp"],
-            "city": parsed["name"]
+            "city": parsed["name"],
+            "country": parsed["sys"]["country"]
         }
     return weather
+
+def get_rates(frm, to):
+    all_currrency = urllib2.urlopen(CURRENCY_URL).read()
+    parsed = json.loads(all_currrency).get("rates")
+    frm_rate = parsed.get(frm.upper())
+    to_rate = parsed.get(to.upper())
+    return to_rate/frm_rate
 
 
 if __name__ == "__main__":
