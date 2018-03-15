@@ -2,3 +2,14 @@ virtual/
 .vscode/
 .env
 __py_cache__/
+*.egg-info
+*.pyc
+build/
+dist/
+.env
+.coverage
+.DS_Store
+htmlcov/
+.cache/
+.idea
+.pytest_cache/

@@ -5,6 +5,7 @@ from flask import request
 import json
 import urllib.request as urllib2
 import urllib.parse
+import os
 
 app = Flask(__name__)
 
@@ -21,6 +22,11 @@ DEFAULTS = {
     "currency_to": "USD"
 }
 
+WEATHER_API = os.getenv("WEATHER_API_KEY")
+CURRENCY_API = os.getenv("CURRENCY_API_KEY")
+
+WEATHER_URL =  "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid={}"
+CURRENCY_URL = "https://openexchangerates.org//api/latest.json?app_id={}"
 
 @app.route("/")
 def home():
@@ -66,7 +72,7 @@ def get_news(query):
 
 def get_weather(query):
     query = urllib.parse.quote(query)
-    url = WEATHER_URL.format(query)
+    url = WEATHER_URL.format(query, WEATHER_API)
     data = urllib2.urlopen(url).read()
     parsed = json.loads(data)
     weather = None
@@ -80,7 +86,8 @@ def get_weather(query):
     return weather
 
 def get_rates(frm, to):
-    all_currrency = urllib2.urlopen(CURRENCY_URL).read()
+    url = CURRENCY_URL.format(CURRENCY_API)
+    all_currrency = urllib2.urlopen(url).read()
     parsed = json.loads(all_currrency).get("rates")
     frm_rate = parsed.get(frm.upper())
     to_rate = parsed.get(to.upper())
