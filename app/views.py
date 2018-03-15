@@ -21,8 +21,6 @@ DEFAULTS = {
     "currency_to": "USD"
 }
 
-WEATHER_URL =  "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=2d5b161aa35a6b40ab5b8f3fc1f7d8a3"
-CURRENCY_URL = "https://openexchangerates.org//api/latest.json?app_id=988a0c242a8a4682bda4a981b7c6c580"
 
 @app.route("/")
 def home():
