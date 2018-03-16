@@ -5,9 +5,9 @@ from flask import request
 import json
 import urllib.request as urllib2
 import urllib.parse
-import os
 
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_pyfile("config.py")
 
 RSS_FEEDS = {
     "bbc": "http://feeds.bbci.co.uk/news/rss.xml",
@@ -18,14 +18,14 @@ RSS_FEEDS = {
 DEFAULTS = {
     "publication": "bbc",
     "city":"Nairobi,Kenya",
-    "currency_from": "KES",
+    "currency_from": "GBP",
     "currency_to": "USD"
 }
 
-WEATHER_API = os.getenv("WEATHER_API_KEY")
-CURRENCY_API = os.getenv("CURRENCY_API_KEY")
+WEATHER_API = app.config["WEATHER_API_KEY"]
+CURRENCY_API = app.config["CURRENCY_API_KEY"]
 
-WEATHER_URL =  "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid={}"
+WEATHER_URL =  "http://api.openweathermap.org/data/2.5/weather?q={0}&units=metric&appid={1}"
 CURRENCY_URL = "https://openexchangerates.org//api/latest.json?app_id={}"
 
 @app.route("/")

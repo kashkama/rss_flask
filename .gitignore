@@ -13,3 +13,4 @@ htmlcov/
 .cache/
 .idea
 .pytest_cache/
+instance/
