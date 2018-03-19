@@ -30,31 +30,28 @@ CURRENCY_API = app.config["CURRENCY_API_KEY"]
 WEATHER_URL =  "http://api.openweathermap.org/data/2.5/weather?q={0}&units=metric&appid={1}"
 CURRENCY_URL = "https://openexchangerates.org//api/latest.json?app_id={}"
 
+def get_value_with_fallback(key):
+    if request.args.get(key):
+        return request.args.get(key)
+    if request.cookies.get(key):
+        return request.cookies.get(key)
+    
+    return DEFAULTS[key]
+
+
 @app.route("/")
 def home():
     # get customized headlines, based on user input or default
-    publication = request.args.get("publication")
-    if not publication:
-        publication = request.cookies.get("publication")
-        if not publication:
-            publication = DEFAULTS["publication"]
-
+    publication = get_value_with_fallback("publication")
     articles = get_news(publication)
-    # get customized weather based on user input or default
-    city = request.args.get("city")
-    if not city:
-        city = DEFAULTS["city"]
-    
-    weather = get_weather(city)
-    # get customized currency based on user input or default
-    currency_from = request.args.get("currency_from")
-    if not currency_from:
-        currency_from = DEFAULTS["currency_from"]
 
-    currency_to = request.args.get("currency_to")
-    if not currency_to:
-        currency_to = DEFAULTS["currency_to"]
-    
+    # get customized weather based on user input or default
+    city = get_value_with_fallback("city")
+    weather = get_weather(city)
+
+    # get customized currency based on user input or default
+    currency_from = get_value_with_fallback("currency_from")
+    currency_to = get_value_with_fallback("currency_to")    
     rate, currencies = get_rates(currency_from, currency_to)
 
     response = make_response(
