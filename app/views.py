@@ -35,7 +35,9 @@ def home():
     # get customized headlines, based on user input or default
     publication = request.args.get("publication")
     if not publication:
-        publication = DEFAULTS["publication"]
+        publication = request.cookies.get("publication")
+        if not publication:
+            publication = DEFAULTS["publication"]
 
     articles = get_news(publication)
     # get customized weather based on user input or default
@@ -56,7 +58,7 @@ def home():
     rate, currencies = get_rates(currency_from, currency_to)
 
     response = make_response(
-        return render_template(
+        render_template(
             "home.html",
             articles=articles,
             weather=weather,
