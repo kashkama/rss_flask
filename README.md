@@ -1,5 +1,7 @@
 # rss_flask
 ## Get lastest new for 24hrs
+* Here's the app
+![alt text](https://github.com/kashkama/rss_flask/blob/master/app/static/images/getupto.png "Get uptodate information")
 ### Contributor
 * Owen, 2018
 
