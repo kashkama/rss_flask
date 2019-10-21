@@ -46,4 +46,4 @@ SQLAlchemy==1.1.14
 ttystatus==0.32
 unity-lens-photos==1.0
 urllib3==1.22
-Werkzeug==0.12.2
+Werkzeug==0.15.3
